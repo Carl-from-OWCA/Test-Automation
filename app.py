@@ -1,77 +1,72 @@
-from fileinput import filename
-import platform
 import os
 from pathlib import Path
 import subprocess
+import config
 
-# Constant Variables
-host_os: str = platform.system()
+def runTests() -> None:
 
-# Control Variables
-prepped: bool = False
-time_lim: float = 4.0
+    if config.host_os == "Linux" or config.host_os == "Darwin":             # for some reason MacOS is Darwin
+        os.chdir(Path.home())                                               # move up to make accessing files & folders easier
+        for file in os.listdir(config.input_folder):
+            filename = os.fsdecode(file)
+            if filename.endswith(config.input_extension):
+                try:
+                    result = subprocess.run([config.program_name + " < " + os.path.join(config.input_folder, filename) 
+                                            + " > " + os.path.join(config.output_folder, 
+                                            filename.replace(config.input_extension, config.output_extension))], 
+                                            shell=True,                     # indicates we're running a shell command
+                                            capture_output=True,            # helps with sending err message to GUI
+                                            check=True,                     # make sure command didn't cause error
+                                            timeout=config.time_lim)        # kill any test cases taking too long
+                except subprocess.CalledProcessError:
+                    print("test case " + filename + " could not be run.")
+                except subprocess.TimeoutExpired:
+                    print("Test case " + filename + " took too long and was halted.")
+                else:
+                    print("Test case " + filename + " ran successfully.")
 
-# Values needed from GUI
-program_name: str = "/mnt/c/Users/ragha/Documents/Code/Personal_Projects/TestAutomation/Inputs/simple"
-# For UNIX: "/mnt/c/Users/ragha/Documents/Code/Personal_Projects/TestAutomation/Inputs/simple"
-# For windows: "C:\\Users\\ragha\\Documents\\Code\\Personal_Projects\\TestAutomation\\Inputs\\simple"
+    elif config.host_os == "Windows":                                      
+        os.chdir(Path.home())                                               # move up to make accessing files & folders easier
+        for file in os.listdir(config.input_folder):
+            filename = os.fsdecode(file)
+            if filename.endswith(config.input_extension):
+                try:
+                    result = subprocess.run(["wsl", dosToUNIX(config.program_name), "<", os.path.join(config.input_folder, filename), 
+                                            ">", os.path.join(config.output_folder, 
+                                            filename.replace(config.input_extension, config.output_extension))], 
+                                            shell=True,                     # indicates we're running a shell command
+                                            capture_output=True,            # helps with sending err message to GUI
+                                            check=True,                     # make sure command didn't cause error
+                                            timeout=config.time_lim)        # kill any test cases taking too long
+                except subprocess.CalledProcessError:
+                    print("test case " + filename + " could not be run.")
+                except subprocess.TimeoutExpired:
+                    print("Test case " + filename + " took too long and was halted.")
+                else:
+                    print("Test case " + filename + " ran successfully.")
 
-input_folder: str = "C:\\Users\\ragha\\Documents\\Code\\Personal_Projects\\TestAutomation\\Inputs"
-# For UNIX: "/mnt/c/Users/ragha/Documents/Code/Personal_Projects/TestAutomation/Inputs"
-# For windows: "C:\\Users\\ragha\\Documents\\Code\\Personal_Projects\\TestAutomation\\Inputs"
+    else:
+        print("Unsupported OS")
 
-input_extension: str = ".in"
+    return                                                                  # Useless, but I like knowing the end of a function
 
-output_folder: str = "C:\\Users\\ragha\\Documents\\Code\\Personal_Projects\\TestAutomation\\Outputs"
-# For UNIX: "/mnt/c/Users/ragha/Documents/Code/Personal_Projects/TestAutomation/Outputs"
-# For windows: "C:\\Users\\ragha\\Documents\\Code\\Personal_Projects\\TestAutomation\\Outputs"
 
-output_extension: str = ".out"
+def dosToUNIX(filepath: str) -> str:
+    """
+    Takes a filpath in DOS format as a string and returns the equivalent filepath
+    in UNIX formatting. Pretty crappy implementation as of now.
+    """
+    filepath = filepath.replace("\\", "/")
+    filepath = filepath.replace("C:", "/mnt/c", 1)
+    return filepath
 
-# while prepped:
-
-if host_os == "Linux" or host_os == "Darwin":                   # for some reason MacOS is Darwin
-    os.chdir(Path.home())                                       # move up to make accessing files & folders easier
-    for file in os.listdir(input_folder):
-        filename = os.fsdecode(file)
-        if filename.endswith(input_extension):
-            try:
-                result = subprocess.run([program_name + " < " + os.path.join(input_folder, filename) + " > " 
-                                        + os.path.join(output_folder, filename.replace(input_extension, output_extension))], 
-                                        shell=True,             # indicates we're running a shell command
-                                        capture_output=True,    # helps with sending err message to GUI
-                                        check=True,             # make sure command didn't cause error
-                                        timeout=time_lim)       # kill any test cases taking too long
-            except subprocess.CalledProcessError:
-                print("test case " + filename + " could not be run.")
-            except subprocess.TimeoutExpired:
-                print("Test case " + filename + " took too long and was halted.")
-            else:
-                print("Test case " + filename + " ran successfully.")
-
-elif host_os == "Windows":                                      
-    os.chdir(Path.home())                                       # move up to make accessing files & folders easier
-    for file in os.listdir(input_folder):
-        filename = os.fsdecode(file)
-        if filename.endswith(input_extension):
-            try:
-                result = subprocess.run(["wsl", program_name, "<", os.path.join(input_folder, filename), ">",
-                                        os.path.join(output_folder, filename.replace(input_extension, output_extension))], 
-                                        shell=True,             # indicates we're running a shell command
-                                        capture_output=True,    # helps with sending err message to GUI
-                                        check=True,             # make sure command didn't cause error
-                                        timeout=time_lim)       # kill any test cases taking too long
-            except subprocess.CalledProcessError:
-                print("test case " + filename + " could not be run.")
-            except subprocess.TimeoutExpired:
-                print("Test case " + filename + " took too long and was halted.")
-            else:
-                print("Test case " + filename + " ran successfully.")
-
-else:
-    print("Unsupported OS")
-
-prepped = False
+"""
+def unixToDOS(filepath: str) -> str:
+    # Opposite of previous function
+    filepath = filepath.replace("/mnt/c", "C:", 1)
+    filepath = filepath.replace("/", "\\")
+    return filepath
+"""
 
 
 """
