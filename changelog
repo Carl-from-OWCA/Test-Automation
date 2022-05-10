@@ -1,0 +1,19 @@
+Overview of Project
+
+Use TKinter GUI to ask the user for the following:
+    * executable file
+    * folder with input files
+    * extension of input files
+    * folder for output files
+    * extension for output files
+
+Once user confirms, the following will need to happen:
+    1) Check all fields have been filled
+    2) Determine what operating system is hosting the app
+    3) Loop through the folder with input files
+        * if a file with correct extension:
+            * send command to shell with redirection
+            * format of command will depend on OS
+            * Check if command executed successfully
+                * if infinite loop, terminate that process
+                  and print it took too long
