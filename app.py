@@ -5,6 +5,8 @@ import config
 
 def runTests() -> None:
 
+    config.log = "Running tests...\n"
+
     if config.host_os == "Linux" or config.host_os == "Darwin":             # for some reason MacOS is Darwin
         os.chdir(Path.home())                                               # move up to make accessing files & folders easier
         for file in os.listdir(config.input_folder):
@@ -19,11 +21,11 @@ def runTests() -> None:
                                             check=True,                     # make sure command didn't cause error
                                             timeout=config.time_lim)        # kill any test cases taking too long
                 except subprocess.CalledProcessError:
-                    print("test case " + filename + " could not be run.")
+                    config.log += ("test case " + filename + " could not be run.\n")
                 except subprocess.TimeoutExpired:
-                    print("Test case " + filename + " took too long and was halted.")
+                    config.log += ("Test case " + filename + " took too long and was halted.\n")
                 else:
-                    print("Test case " + filename + " ran successfully.")
+                    config.log += ("Test case " + filename + " ran successfully.\n")
 
     elif config.host_os == "Windows":                                      
         os.chdir(Path.home())                                               # move up to make accessing files & folders easier
@@ -39,14 +41,16 @@ def runTests() -> None:
                                             check=True,                     # make sure command didn't cause error
                                             timeout=config.time_lim)        # kill any test cases taking too long
                 except subprocess.CalledProcessError:
-                    print("test case " + filename + " could not be run.")
+                    config.log += ("test case " + filename + " could not be run.\n")
                 except subprocess.TimeoutExpired:
-                    print("Test case " + filename + " took too long and was halted.")
+                    config.log += ("Test case " + filename + " took too long and was halted.\n")
                 else:
-                    print("Test case " + filename + " ran successfully.")
+                    config.log += ("Test case " + filename + " ran successfully.\n")
 
     else:
-        print("Unsupported OS")
+        config.log += ("Unsupported OS\n")
+
+    config.log += "Finished\n"
 
     return                                                                  # Useless, but I like knowing the end of a function
 
