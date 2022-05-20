@@ -27,7 +27,15 @@ def processAndRun() -> None:
     config.input_extension = entry_inext.get()
     config.output_folder = entry_outdir.get()
     config.output_extension = entry_outext.get()
+    try:
+        float(entry_time.get())
+    except:
+        config.time_lim = 4.0   # probably don't need to since it's already set
+    else:
+        config.time_lim = float(entry_time.get())
     runTests()
+    instr.config(state=NORMAL)
+    instr.delete('1.0', END)
     instr.insert('0.0', config.log)
     instr.config(state=DISABLED)
 
@@ -37,14 +45,14 @@ def processAndRun() -> None:
 # Start of GUI specification ==============================================================
 root = Tk()
 root.title("Test Automator")
-root.geometry("545x650") # 1920x1080 is full screen
+root.geometry("545x720") # 1920x1080 is full screen
 root.resizable(False, False)
 
 frm = ttk.Frame(root)
 frm.grid()
 
 # Specifications for instructions
-instr = Text(frm, width=62, height=7, relief=GROOVE, bg="light grey", wrap=WORD)
+instr = Text(frm, width=62, height=8, relief=GROOVE, bg="light grey", wrap=WORD)
 instr.insert('0.0', config.instructions)
 instr.config(state=DISABLED)
 instr.grid(column=0, row=0, pady=(config.default_pad, 0))
@@ -76,7 +84,12 @@ label_outext = ttk.Label(actions, text=config.label_outext, padding=config.defau
 label_outext.grid(column=0, row=7, sticky='w')
 
 ttk.Label(actions, text="").grid(column=0, row=8)   # spacer
+
+label_time = ttk.Label(actions, text=config.label_time, padding=config.default_pad)
+label_time.grid(column=0, row=9, sticky="w")
+
 ttk.Label(actions, text="").grid(column=0, row=10)   # spacer
+ttk.Label(actions, text="").grid(column=0, row=12)   # spacer
 
 # Entries
 entry_exec = ttk.Entry(actions, textvariable=StringVar(), width=config.entry_width1)
@@ -87,12 +100,18 @@ entry_indir.grid(column=1, row=3, sticky='w')
 
 entry_inext = ttk.Entry(actions, textvariable=StringVar(), width=config.entry_width2)
 entry_inext.grid(column=1, row=4, sticky='w')
+entry_inext.insert(0, ".in")
 
 entry_outdir = ttk.Entry(actions, textvariable=StringVar(), width=config.entry_width1)
 entry_outdir.grid(column=1, row=6, sticky='w')
 
 entry_outext = ttk.Entry(actions, textvariable=StringVar(), width=config.entry_width2)
 entry_outext.grid(column=1, row=7, sticky='w')
+entry_outext.insert(0, ".out")
+
+entry_time = ttk.Entry(actions, textvariable=StringVar(), width=config.entry_width2)
+entry_time.grid(column=1, row=9, sticky="w")
+entry_time.insert(0, "4.0")
 
 # Buttons
 but_exec = ttk.Button(actions, text="Browse", command=partial(queryFile, entry_exec))
@@ -105,7 +124,7 @@ but_outdir = ttk.Button(actions, text="Browse", command=partial(queryFolder, ent
 but_outdir.grid(column=2, row=6, padx=(config.default_pad, config.default_pad))
 
 but_run = ttk.Button(actions, text="Run Tests", command=processAndRun)
-but_run.grid(column=1, row=9)
+but_run.grid(column=1, row=11)
 # End of Interactive Area
 
 # Specifications for Log
@@ -118,10 +137,10 @@ label_log.grid(column=0, row=0, sticky="w")
 scrollbar = Scrollbar(logArea)
 scrollbar.grid(column=1, row=1, sticky=NSEW)
 
-instr = Text(logArea, width=60, height=10, wrap=WORD, yscrollcommand=scrollbar.set(0, 0.2))
+instr = Text(logArea, width=60, height=10, wrap=WORD, yscrollcommand=scrollbar.set)
 instr.grid(column=0, row=1)
 
-# scrollbar.config(command=instr.yview) # is this necessary?
+scrollbar.config(command=instr.yview) # is this necessary?
 
 # End of specification for Log
 

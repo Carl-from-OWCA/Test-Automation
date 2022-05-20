@@ -17,3 +17,9 @@ Once user confirms, the following will need to happen:
             * Check if command executed successfully
                 * if infinite loop, terminate that process
                   and print it took too long
+
+
+* Maybe make the log not clear automatically on run?
+    * would add a manual clear button then
+* Could make the GUI look cleaner
+    * for now, as long as it works I'm happy

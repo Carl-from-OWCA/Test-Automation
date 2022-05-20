@@ -13,7 +13,7 @@ import platform
 host_os: str = platform.system()
 
 # Control Variables
-time_lim: float = 4.0   # might make this user-specifed later
+time_lim: float = 4.0
 
 # Values needed from GUI
 program_name: str = ""
@@ -30,6 +30,7 @@ label_indir: str = "Input Folder: "
 label_inext: str = "Input Extension: "
 label_outdir: str = "Output Folder: "
 label_outext: str = "Output Extension: "
+label_time: str = "Max sec/test: "
 label_log: str = "LOG: "
 default_pad: int = 10
 entry_width1: int = 50
@@ -38,5 +39,6 @@ instructions: str = ("First, select your executable file. Then, select the folde
                     "specify what their extension is. All files in the folder with the specifed extension " + 
                     "will be inputted into the executable you selected. Finally, select which folder you " +
                     "want the output to be sent to and what the extension for those files should be. Each " + 
-                    "input file will generate an output file with the same name.")
+                    "input file will generate an output file with the same name. Bad values for time limit " +
+                    "will be replaced with 4.0 seconds/test")
 log: str = ""
