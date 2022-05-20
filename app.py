@@ -60,14 +60,6 @@ def dosToUNIX(filepath: str) -> str:
     filepath = filepath.replace("C:", "/mnt/c", 1)
     return filepath
 
-"""
-def unixToDOS(filepath: str) -> str:
-    # Opposite of previous function
-    filepath = filepath.replace("/mnt/c", "C:", 1)
-    filepath = filepath.replace("/", "\\")
-    return filepath
-"""
-
 
 """
 I'm invoking WSL on Windows since most projects tend to be done on Linux and Windows would not be able
