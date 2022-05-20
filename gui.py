@@ -146,5 +146,3 @@ scrollbar.config(command=instr.yview) # is this necessary?
 
 # End of GUI specification =======================================================================
 
-root.mainloop()
-
