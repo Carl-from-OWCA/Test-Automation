@@ -8,7 +8,7 @@ The app will work on Windows (WSL only as of now), Linux, and MacOS. I will even
 Since this program relies heavily on the terminal, it is susceptible to a variety of issues stemming from the user's environment. However, the most common issue is that the executable file may not have the permissions to be run. This can usually be fixed by issuing the following command on UNIX-based systems: `chmod +rwx filename`.
 
 How to use:
-* Just run the driver.py file
+* Just run the `driver.py` file
 
 Requirements:
 * Python 3
